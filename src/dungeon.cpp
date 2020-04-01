@@ -13,24 +13,43 @@ int main () {
 	y = LINES / 2;
 	x = COLS / 2;
 
+	printw("Y: %d/%d\nX: %d/%d\nPress [F1] to quit", y, LINES, x, COLS);
+
 	mvaddch(y, x, player | A_BOLD);
 	refresh();
 
 	while ((ch = getch()) != KEY_F(1)) {
+		mvprintw(0, 0, "Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
+		                y, LINES, x, COLS);
 		mvaddch(y, x, ' ');
 
 		switch (ch) {
 			case KEY_UP:
-				mvaddch(--y, x, player | A_BOLD);
+				if (--y < 0)
+					y = 0;
+
+				mvaddch(y, x, player | A_BOLD);
 			break;
+
 			case KEY_DOWN:
-				mvaddch(++y, x, player | A_BOLD);
+				if (++y > LINES-1)
+					y = LINES-1;
+
+				mvaddch(y, x, player | A_BOLD);
 			break;
+
 			case KEY_LEFT:
-				mvaddch(y, --x, player | A_BOLD);
+				if (--x < 0)
+					x = 0;
+
+				mvaddch(y, x, player | A_BOLD);
 			break;
+
 			case KEY_RIGHT:
-				mvaddch(y, ++x, player | A_BOLD);
+				if (++x > COLS-1)
+					x = COLS-1;
+
+				mvaddch(y, x, player | A_BOLD);
 			break;
 			default:
 				mvaddch(y, x, player | A_BOLD);

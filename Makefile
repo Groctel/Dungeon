@@ -2,7 +2,7 @@ HOME = .
 BIN  = $(HOME)/bin
 SRC  = $(HOME)/src
 
-CXXFLAGS = -std=c++11 -O2 -Wall -I$(INC) -lncurses
+CXXFLAGS = -std=c++11 -O2 -Wall -lncurses
 
 all:
 	@mkdir -p $(BIN)
