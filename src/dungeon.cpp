@@ -1,11 +1,12 @@
 #include <ncurses.h>
+#include "player.hpp"
 
 int main () {
 /*
  *	Variables declaration
  */
-	int y, x, ch, height, width, starty, startx;
-	char player = '@';
+	int ch, height, width, starty, startx;
+	Player player;
 	WINDOW* gameframe;
 /*
  *	Screen initialisation
@@ -13,17 +14,13 @@ int main () {
 	initscr();
 	noecho();
 	raw();
-	keypad(stdscr, TRUE);
 	curs_set(0);
-/*
- *	Player initial position
- */
-	y = LINES / 2;
-	x = COLS / 2;
 /*
  *	Interface initialisation
  */
-	printw("Y: %d/%d\nX: %d/%d\nPress [F1] to quit", y, LINES, x, COLS);
+	printw ("Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
+	        player.Y(), LINES, player.X(), COLS);
+	refresh();
 /*
  *	Window initialisation
  */
@@ -36,51 +33,37 @@ int main () {
 	box(gameframe, 0, 0);
 	wrefresh(gameframe);
 /*
- *	Character initialisation
+ *	Player character initialisation
  */
-	mvaddch(y, x, player | A_BOLD);
+	player = Player('@' | A_BOLD, height/2, width/2);
+	mvwaddch(gameframe, player.Y(), player.X(), player.Avatar());
+/*
+ *	Capture input into the game frame
+ */
+	keypad(gameframe, TRUE);
 /*
  *	Move the player until the game quits
  */
-	while ((ch = getch()) != KEY_F(1)) {
+	while ((ch = wgetch(gameframe)) != KEY_F(1)) {
 	/*
 	 *	Empty the player's current square
 	 */
-		mvaddch(y, x, ' ');
+		mvwaddch(gameframe, player.Y(), player.X(), ' ');
 	/*
 	 *	Move the player depending on input
 	 */
-		switch (ch) {
-		//	Move up (negative y) when the up arrow key is pressed
-			case KEY_UP:
-				if (--y < starty+1)
-					y = starty+1;
-			break;
-		//	Move down (positive y) when the down arrow key is pressed
-			case KEY_DOWN:
-				if (++y > starty+height-2)
-					y = starty+height-2;
-			break;
-		//	Move left (negative x) when the left arrow key is pressed
-			case KEY_LEFT:
-				if (--x < startx+1)
-					x = startx+1;
-			break;
-		//	Move right (positive x) when the right arrow key is pressed
-			case KEY_RIGHT:
-				if (++x > startx+width-2)
-					x = startx+width-2;
-			break;
-		}
+		player.Move(ch, gameframe);
 	/*
 	 *	Print the interface and the player's avatar over it and refresh
 	 */
-		mvprintw(0, 0, "Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
-		                y, LINES, x, COLS);
-		mvaddch(y, x, player | A_BOLD);
+		mvprintw (0, 0, "Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
+		                player.Y(), LINES, player.X(), COLS);
+		mvwaddch(gameframe, player.Y(), player.X(), player.Avatar());
+		refresh();
 	};
 /*
- *	Close the ncurses environment
+ *	Close the ncurses environment and return
  */
 	endwin();
+	return 0;
 }
