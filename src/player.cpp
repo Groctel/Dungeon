@@ -31,6 +31,7 @@ void Player :: MoveUp (WINDOW* win) {
 		pos_y = 1;
 
 	mvwaddch(win, pos_y, pos_x, '@');
+	Log::Instance()->Record("Player moved one square up.");
 }
 
 void Player :: MoveDown (WINDOW* win) {
@@ -40,6 +41,7 @@ void Player :: MoveDown (WINDOW* win) {
 		pos_y = win->_maxy - 1;
 
 	mvwaddch(win, pos_y, pos_x, '@');
+	Log::Instance()->Record("Player moved one square down.");
 }
 
 void Player :: MoveLeft (WINDOW* win) {
@@ -49,6 +51,7 @@ void Player :: MoveLeft (WINDOW* win) {
 		pos_x = 1;
 
 	mvwaddch(win, pos_y, pos_x, '@');
+	Log::Instance()->Record("Player moved one square left.");
 }
 
 void Player :: MoveRight (WINDOW* win) {
@@ -58,4 +61,5 @@ void Player :: MoveRight (WINDOW* win) {
 		pos_x = win->_maxx - 1;
 
 	mvwaddch(win, pos_y, pos_x, '@');
+	Log::Instance()->Record("Player moved one square right.");
 }

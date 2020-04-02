@@ -2,6 +2,7 @@
 #define DUNGEON_PLAYER
 
 #include <ncurses.h>
+#include "log.hpp"
 
 class Player {
 private:
