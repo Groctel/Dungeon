@@ -24,27 +24,38 @@ int Player :: X () const {
 	return pos_x;
 }
 
-void Player :: Move (int ch, WINDOW* win) {
-	switch (ch) {
-	//	Move up (negative y) when the up arrow key is pressed
-		case KEY_UP:
-			if (--pos_y < 1)
-				pos_y = 1;
-		break;
-	//	Move down (positive y) when the down arrow key is pressed
-		case KEY_DOWN:
-			if (++pos_y > win->_maxy - 1)
-				pos_y = win->_maxy - 1;
-		break;
-	//	Move left (negative x) when the left arrow key is pressed
-		case KEY_LEFT:
-			if (--pos_x < 1)
-				pos_x = 1;
-		break;
-	//	Move right (positive x) when the right arrow key is pressed
-		case KEY_RIGHT:
-			if (++pos_x > win->_maxx - 1)
-				pos_x = win->_maxx - 1;
-		break;
-	}
+void Player :: MoveUp (WINDOW* win) {
+	mvwaddch(win, pos_y, pos_x, ' ');
+
+	if (--pos_y < 1)
+		pos_y = 1;
+
+	mvwaddch(win, pos_y, pos_x, '@');
+}
+
+void Player :: MoveDown (WINDOW* win) {
+	mvwaddch(win, pos_y, pos_x, ' ');
+
+	if (++pos_y > win->_maxy - 1)
+		pos_y = win->_maxy - 1;
+
+	mvwaddch(win, pos_y, pos_x, '@');
+}
+
+void Player :: MoveLeft (WINDOW* win) {
+	mvwaddch(win, pos_y, pos_x, ' ');
+
+	if (--pos_x < 1)
+		pos_x = 1;
+
+	mvwaddch(win, pos_y, pos_x, '@');
+}
+
+void Player :: MoveRight (WINDOW* win) {
+	mvwaddch(win, pos_y, pos_x, ' ');
+
+	if (++pos_x > win->_maxx - 1)
+		pos_x = win->_maxx - 1;
+
+	mvwaddch(win, pos_y, pos_x, '@');
 }

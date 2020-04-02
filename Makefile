@@ -6,10 +6,14 @@ SRC  = $(HOME)/src
 
 CXXFLAGS = -std=c++11 -O2 -Wall -I$(INC) -lncurses
 
-all: player
+all: dungeon
 	@mkdir -p $(BIN)
-	$(CXX) $(CXXFLAGS) $(SRC)/dungeon.cpp -o $(BIN)/dungeon \
-	                   $(OBJ)/player.o
+	$(CXX) $(CXXFLAGS) $(SRC)/main.cpp -o $(BIN)/dungeon \
+	                   $(OBJ)/dungeon.o $(OBJ)/player.o
+
+dungeon: player
+	@mkdir -p $(OBJ)
+	$(CXX) $(CXXFLAGS) $(SRC)/dungeon.cpp -c -o $(OBJ)/dungeon.o
 
 player:
 	@mkdir -p $(OBJ)

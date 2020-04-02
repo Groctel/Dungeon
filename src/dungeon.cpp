@@ -1,15 +1,32 @@
-#include <ncurses.h>
-#include "player.hpp"
+#include "dungeon.hpp"
 
-int main () {
-/*
- *	Variables declaration
- */
-	int ch;
-	Player player;
-	WINDOW* gameframe,
-	      * log,
-	      * menu;
+Dungeon :: Dungeon ()
+	:running(true)
+{ }
+
+void Dungeon :: GetKey () {
+	int key = wgetch(gameframe);
+
+	switch (key) {
+		case KEY_UP:
+			player.MoveUp(gameframe);
+		break;
+		case KEY_DOWN:
+			player.MoveDown(gameframe);
+		break;
+		case KEY_LEFT:
+			player.MoveLeft(gameframe);
+		break;
+		case KEY_RIGHT:
+			player.MoveRight(gameframe);
+		break;
+		case 'q':
+			running = false;
+		break;
+	}
+}
+
+void Dungeon :: Initialise () {
 /*
  *	Screen initialisation
  */
@@ -40,26 +57,17 @@ int main () {
  *	Capture input into the game frame
  */
 	keypad(gameframe, TRUE);
-/*
- *	Move the player until the game quits
- */
-	while ((ch = wgetch(gameframe)) != 'q') {
-	/*
-	 *	Empty the player's current square
-	 */
-		mvwaddch(gameframe, player.Y(), player.X(), ' ');
-	/*
-	 *	Move the player depending on input
-	 */
-		player.Move(ch, gameframe);
-	/*
-	 *	Print the interface and the player's avatar over it and refresh
-	 */
-		mvwaddch(gameframe, player.Y(), player.X(), player.Avatar());
-	};
-/*
- *	Close the ncurses environment and return
- */
+}
+
+void Dungeon :: Run () {
+	while (running) {
+		GetKey();
+	}
+}
+
+void Dungeon :: Terminate () {
+	delwin(gameframe);
+	delwin(log);
+	delwin(menu);
 	endwin();
-	return 0;
 }

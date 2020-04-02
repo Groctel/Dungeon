@@ -23,7 +23,10 @@ public:
 /*
  *	Setters
  */
-	void Move (int ch, WINDOW* win);
+	void MoveUp    (WINDOW* win);
+	void MoveDown  (WINDOW* win);
+	void MoveLeft  (WINDOW* win);
+	void MoveRight (WINDOW* win);
 };
 
 #endif
