@@ -5,9 +5,11 @@ int main () {
 /*
  *	Variables declaration
  */
-	int ch, height, width, starty, startx;
+	int ch;
 	Player player;
-	WINDOW* gameframe;
+	WINDOW* gameframe,
+	      * log,
+	      * menu;
 /*
  *	Screen initialisation
  */
@@ -16,26 +18,23 @@ int main () {
 	raw();
 	curs_set(0);
 /*
- *	Interface initialisation
- */
-	printw ("Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
-	        player.Y(), LINES, player.X(), COLS);
-	refresh();
-/*
  *	Window initialisation
  */
-	height = LINES / 4;
-	width  = COLS / 4;
-	starty = (LINES - height) / 2;
-	startx = (COLS - width) / 2;
+	gameframe = newwin(LINES-5, COLS*0.75, 0, 0);
+	log = newwin(3, COLS*0.75, LINES-4, 0);
+	menu = newwin(LINES-1, COLS*0.25-2, 0, COLS*0.75+2);
 
-	gameframe = newwin(height, width, starty, startx);
 	box(gameframe, 0, 0);
 	wrefresh(gameframe);
+	box(log, 0, 0);
+	mvwprintw(log, 1, 1, "Move with arrows. Press 'q' to quit playing.");
+	wrefresh(log);
+	box(menu, 0, 0);
+	wrefresh(menu);
 /*
  *	Player character initialisation
  */
-	player = Player('@' | A_BOLD, height/2, width/2);
+	player = Player('@' | A_BOLD, gameframe->_maxy/2, gameframe->_maxx/2);
 	mvwaddch(gameframe, player.Y(), player.X(), player.Avatar());
 /*
  *	Capture input into the game frame
@@ -44,7 +43,7 @@ int main () {
 /*
  *	Move the player until the game quits
  */
-	while ((ch = wgetch(gameframe)) != KEY_F(1)) {
+	while ((ch = wgetch(gameframe)) != 'q') {
 	/*
 	 *	Empty the player's current square
 	 */
@@ -56,10 +55,7 @@ int main () {
 	/*
 	 *	Print the interface and the player's avatar over it and refresh
 	 */
-		mvprintw (0, 0, "Y: %d/%d\nX: %d/%d\nPress [F1] to quit",
-		                player.Y(), LINES, player.X(), COLS);
 		mvwaddch(gameframe, player.Y(), player.X(), player.Avatar());
-		refresh();
 	};
 /*
  *	Close the ncurses environment and return
