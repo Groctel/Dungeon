@@ -20,8 +20,35 @@ size_t Log :: Pending () const {
 	return pending;
 }
 
+void Log :: Start () {
+	time(&starttime);
+}
+
 void Log :: Record (const std::string message) {
-	history.push_back(message);
+	int seconds,
+	    minutes;
+
+	time(&now);
+
+	seconds  = difftime(now, starttime);
+	minutes  = seconds/60;
+	seconds %= 60;
+
+	history.push_back("[");
+
+	if (minutes < 10)
+		history.rbegin()->append("0");
+
+	history.rbegin()->append(std::to_string(minutes));
+	history.rbegin()->append(":");
+
+	if (seconds < 10)
+		history.rbegin()->append("0");
+
+	history.rbegin()->append(std::to_string(seconds));
+	history.rbegin()->append("] ");
+	history.rbegin()->append(message);
+
 	pending++;
 }
 

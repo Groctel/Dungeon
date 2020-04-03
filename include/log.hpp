@@ -1,6 +1,7 @@
 #ifndef DUNGEON_LOG
 #define DUNGEON_LOG
 
+#include <ctime>
 #include <stack>
 #include <string>
 #include <vector>
@@ -10,6 +11,8 @@ private:
 	static Log * instance;
 
 	size_t pending;
+	time_t now,
+	       starttime;
 	std::vector<std::string> history;
 
 	Log ();
@@ -20,6 +23,7 @@ public:
 
 	size_t Pending () const;
 
+	void Start  ();
 	void Record (const std::string message);
 
 	std::string             Print        ();
