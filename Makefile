@@ -1,12 +1,15 @@
 HOME = .
 BIN  = $(HOME)/bin
+DOC  = $(HOME)/doc
 INC  = $(HOME)/include
 OBJ  = $(HOME)/obj
 SRC  = $(HOME)/src
 
-CXXFLAGS = -std=c++11 -g -Wall -I$(INC) -lncurses
+CXXFLAGS = -std=c++11 -O2 -Wall -I$(INC) -lncursesw
 
-all: directories controller dungeon ui
+all: build docs
+
+build: directories controller dungeon ui
 	@mkdir -p $(BIN)
 	$(CXX) $(CXXFLAGS) $(SRC)/main.cpp -o $(BIN)/dungeon \
 	                   $(OBJ)/controller.o \
@@ -18,6 +21,12 @@ all: directories controller dungeon ui
 directories:
 	@mkdir -p $(OBJ)
 	@mkdir -p $(BIN)
+
+docs:
+	@mkdir -p $(DOC)
+	@rm -rf $(DOC)/*
+	@printf "Creating documentation in \"%s\"...\n" $(DOC)
+	@doxygen 1>/dev/null 2>&1
 
 controller: dungeon player ui
 	$(CXX) $(CXXFLAGS) $(SRC)/controller.cpp -c -o $(OBJ)/controller.o

@@ -1,3 +1,6 @@
+/** @file dungeon.hpp
+  */
+
 #ifndef DUNGEON_DUNGEON
 #define DUNGEON_DUNGEON
 
@@ -5,11 +8,17 @@
 #include "player.hpp"
 #include "ui.hpp"
 
-typedef void (*fptr) ();
+/** @class Dungeon
+  * @brief Dungeon model that runs the game's environment
+  *
+  * @var Player* player
+  * Main player object
+  */
 
 class Dungeon {
 private:
 	Player * player;
+
 public:
 	Dungeon  ();
 	~Dungeon ();

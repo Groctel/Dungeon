@@ -1,3 +1,6 @@
+/** @file ui.hpp
+  */
+
 #ifndef DUNGEON_UI
 #define DUNGEON_UI
 
@@ -5,6 +8,28 @@
 #include <ncurses.h>
 #include <stack>
 #include "log.hpp"
+
+/** @class UI
+  * @brief Ncurses-based view that interactivaly shows the game
+  *
+  * @var UI* instance
+  * Singleton instance pointer
+  *
+  * @var WINDOW* activewindow
+  * Window the player is currently controlling
+  *
+  * @var WINDOW* commandbar
+  * Command bar at the bottom of the interface
+  *
+  * @var WINDOW* gameframe
+  * Frame inside of which the dungeon is rendered
+  *
+  * @var WINDOW* gamelog
+  * Small bar below the `gameframe` displaying the log
+  *
+  * @var WINDOW* sidemenu
+  * Multipurpose menu at the right side of the screen
+  */
 
 class UI {
 private:
@@ -24,6 +49,7 @@ private:
 	void MakeActive     (WINDOW * win);
 	void RefreshWindow  (WINDOW * win);
 	void RefreshWindows ();
+
 public:
 	static UI * Instance ();
 	~UI ();

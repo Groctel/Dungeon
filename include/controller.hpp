@@ -1,3 +1,6 @@
+/** @file controller.hpp
+  */
+
 #ifndef DUNGEON_CONTROLLER
 #define DUNGEON_CONTROLLER
 
@@ -5,6 +8,16 @@
 #include "dungeon.hpp"
 #include "player.hpp"
 #include "ui.hpp"
+
+/** @class Controller
+  * @brief Game controller the user interacts with
+  *
+  * @var bool running
+  * Game running status. Set to `false` to stop the game.
+  *
+  * @var Dungeon & dungeon
+  * Dungeon model game action commands are sent to.
+  */
 
 class Controller {
 private:
