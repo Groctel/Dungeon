@@ -4,22 +4,32 @@ INC  = $(HOME)/include
 OBJ  = $(HOME)/obj
 SRC  = $(HOME)/src
 
-CXXFLAGS = -std=c++11 -O2 -Wall -I$(INC) -lncurses
+CXXFLAGS = -std=c++11 -g -Wall -I$(INC) -lncurses
 
-all: directories dungeon
+all: directories controller dungeon ui
 	@mkdir -p $(BIN)
 	$(CXX) $(CXXFLAGS) $(SRC)/main.cpp -o $(BIN)/dungeon \
-	                   $(OBJ)/dungeon.o $(OBJ)/player.o $(OBJ)/log.o
+	                   $(OBJ)/controller.o \
+	                   $(OBJ)/dungeon.o \
+	                   $(OBJ)/log.o \
+	                   $(OBJ)/player.o \
+	                   $(OBJ)/ui.o
 
 directories:
 	@mkdir -p $(OBJ)
 	@mkdir -p $(BIN)
 
-dungeon: player
+controller: dungeon player ui
+	$(CXX) $(CXXFLAGS) $(SRC)/controller.cpp -c -o $(OBJ)/controller.o
+
+dungeon: controller player ui
 	$(CXX) $(CXXFLAGS) $(SRC)/dungeon.cpp -c -o $(OBJ)/dungeon.o
+
+log:
+	$(CXX) $(CXXFLAGS) $(SRC)/log.cpp -c -o $(OBJ)/log.o
 
 player: log
 	$(CXX) $(CXXFLAGS) $(SRC)/player.cpp -c -o $(OBJ)/player.o
 
-log:
-	$(CXX) $(CXXFLAGS) $(SRC)/log.cpp -c -o $(OBJ)/log.o
+ui:
+	$(CXX) $(CXXFLAGS) $(SRC)/ui.cpp -c -o $(OBJ)/ui.o

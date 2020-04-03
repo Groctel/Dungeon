@@ -1,15 +1,16 @@
 #include <ncurses.h>
+#include "controller.hpp"
 #include "dungeon.hpp"
-#include "log.hpp"
-
-Log * Log::instance = nullptr;
+#include "ui.hpp"
 
 int main () {
+	UI::Instance()->Init();
 	Dungeon dungeon;
+	Controller controller(dungeon);
 
-	dungeon.Initialise();
-	dungeon.Run();
-	dungeon.Terminate();
+	controller.Run();
+
+	UI::Instance()->Stop();
 
 	return 0;
 }

@@ -3,26 +3,21 @@
 
 #include <ncurses.h>
 #include "player.hpp"
+#include "ui.hpp"
 
 typedef void (*fptr) ();
 
 class Dungeon {
 private:
-	bool running;
-	int key_input;
-	Player player;
-	WINDOW* gameframe,
-	      * log,
-	      * menu;
-
-	void GetKey ();
-	void Stop      ();
+	Player * player;
 public:
-	Dungeon ();
+	Dungeon  ();
+	~Dungeon ();
 
-	void Initialise ();
-	void Run ();
-	void Terminate ();
+	void MovePlayerUp    ();
+	void MovePlayerDown  ();
+	void MovePlayerLeft  ();
+	void MovePlayerRight ();
 };
 
 #endif
