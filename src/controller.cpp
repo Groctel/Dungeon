@@ -8,6 +8,7 @@ Controller :: Controller (Dungeon & d)
 void Controller :: Run () {
 	while (running) {
 		GetKey();
+		UI::Instance()->UpdateLog();
 	}
 }
 

@@ -3,6 +3,8 @@
 
 #include <clocale>
 #include <ncurses.h>
+#include <stack>
+#include "log.hpp"
 
 class UI {
 private:
@@ -31,7 +33,8 @@ public:
 	void Init ();
 	void Stop ();
 
-	void DrawChar (int y, int x, const chtype ch);
+	void DrawChar  (int y, int x, const chtype ch);
+	void UpdateLog ();
 };
 
 #endif

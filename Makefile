@@ -22,7 +22,7 @@ directories:
 controller: dungeon player ui
 	$(CXX) $(CXXFLAGS) $(SRC)/controller.cpp -c -o $(OBJ)/controller.o
 
-dungeon: controller player ui
+dungeon: player ui
 	$(CXX) $(CXXFLAGS) $(SRC)/dungeon.cpp -c -o $(OBJ)/dungeon.o
 
 log:
@@ -31,5 +31,5 @@ log:
 player: log
 	$(CXX) $(CXXFLAGS) $(SRC)/player.cpp -c -o $(OBJ)/player.o
 
-ui:
+ui: log
 	$(CXX) $(CXXFLAGS) $(SRC)/ui.cpp -c -o $(OBJ)/ui.o

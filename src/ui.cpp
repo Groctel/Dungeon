@@ -74,3 +74,22 @@ void UI :: DrawChar (int y, int x, const chtype ch) {
 	mvwaddch(activewindow, y, x, ch);
 	RefreshWindow(activewindow);
 }
+
+void UI :: UpdateLog () {
+	if (Log::Instance()->Pending() == 1) {
+		werase(gamelog);
+		mvwprintw(gamelog, 1, 1, Log::Instance()->Print().c_str());
+		RefreshWindow(gamelog);
+	}
+	else if (Log::Instance()->Pending() > 1) {
+		std::stack<std::string> messages = Log::Instance()->PrintPending();
+		size_t pending = messages.size();
+
+		for (size_t i=0; i<pending; i++) {
+			werase(gamelog);
+			mvwprintw(gamelog, 1, 1, messages.top().c_str());
+			RefreshWindow(gamelog);
+			messages.pop();
+		}
+	}
+}
