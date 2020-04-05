@@ -27,7 +27,7 @@ Controller :: Controller (Dungeon & d)
   */
 
 void Controller :: Run () {
-	Log::Instance()->Start();
+	Log::Instance()->Reset();
 
 	while (running) {
 		GetKey();

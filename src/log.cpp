@@ -10,6 +10,7 @@ Log * Log :: instance = nullptr;
   */
 
 Log :: Log ()
+	:pending (0)
 { }
 
 /** @fn Log * Log :: Instance ()
@@ -47,28 +48,29 @@ size_t Log :: Pending () const {
 	return pending;
 }
 
-/** @fn void Log :: Start ()
-  * @brief Game time starter
+/** @fn void Log :: Reset ()
+  * @brief Game start timestamp resetter
   *
-  * Sets the game start timestamp.
+  * Resets the game start timestamp.
   */
 
-void Log :: Start () {
+void Log :: Reset () {
 	time(&starttime);
 }
 
-/** @fn void Log :: Record (const std::string message)
-  * @brief Insert a message into the events history
+/** @fn void Log :: Record (const std::string event)
+  * @brief Insert a event into the events history
   *
-  * @param message Message to be inserted
+  * @param event Message to be inserted
   *
   * Gets the current time and prints it in `[HH:MM]` format into the event
-  * string followed by the message.
+  * string followed by the event.
   */
 
-void Log :: Record (const std::string message) {
+void Log :: Record (const std::string text) {
 	int seconds,
 	    minutes;
+	std::string event = "[";
 
 	time(&now);
 
@@ -76,21 +78,17 @@ void Log :: Record (const std::string message) {
 	minutes  = seconds/60;
 	seconds %= 60;
 
-	history.push_back("[");
-
 	if (minutes < 10)
-		history.rbegin()->append("0");
+		event += "0";
 
-	history.rbegin()->append(std::to_string(minutes));
-	history.rbegin()->append(":");
+	event += std::to_string(minutes) + ":";
 
 	if (seconds < 10)
-		history.rbegin()->append("0");
+		event += "0";
 
-	history.rbegin()->append(std::to_string(seconds));
-	history.rbegin()->append("] ");
-	history.rbegin()->append(message);
+	event += std::to_string(seconds) + "] " + text;
 
+	history.push_back(event);
 	pending++;
 }
 
@@ -100,8 +98,7 @@ void Log :: Record (const std::string message) {
   * @return Last event string
   */
 
-std::string Log :: Print () {
-	pending = 0;
+std::string Log :: Print () const {
 	return * history.rbegin();
 }
 
@@ -133,15 +130,15 @@ std::string Log :: Print (size_t position) const {
   */
 
 std::stack<std::string> Log :: Print (size_t from, size_t to) const {
-	std::stack<std::string> messages;
+	std::stack<std::string> events;
 	std::vector<std::string>::const_reverse_iterator it = history.crbegin();
 
 	for (size_t i=0; i<from; i++, ++it);
 
 	for (size_t i=from; i<=to; i++, ++it)
-		messages.push(*it);
+		events.push(*it);
 
-	return messages;
+	return events;
 }
 
 /** @fn std::stack<std::string> Log :: PrintPending ()
@@ -154,13 +151,13 @@ std::stack<std::string> Log :: Print (size_t from, size_t to) const {
   */
 
 std::stack<std::string> Log :: PrintPending () {
-	std::stack<std::string> messages;
+	std::stack<std::string> events;
 	std::vector<std::string>::const_reverse_iterator it = history.crbegin();
 
 	for (size_t i=0; i<pending; i++, ++it)
-		messages.push(*it);
+		events.push(*it);
 
 	pending = 0;
 
-	return messages;
+	return events;
 }

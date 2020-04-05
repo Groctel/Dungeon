@@ -16,7 +16,7 @@
   * Singleton instance pointer
   *
   * @var size_t pending
-  * Number of messages recorded but not printed
+  * Number of events recorded but not printed
   *
   * @var time_t now
   * Current time, compared with `starttime` to get the game gime
@@ -46,13 +46,13 @@ public:
 
 	size_t Pending () const;
 
-	void Start  ();
-	void Record (const std::string message);
+	void Reset  ();
+	void Record (const std::string text);
 
-	std::string             Print        ();
+	std::string             Print        () const;
 	std::string             Print        (size_t position) const;
-	std::stack<std::string> PrintPending ();
 	std::stack<std::string> Print        (size_t from, size_t to) const;
+	std::stack<std::string> PrintPending ();
 };
 
 #endif

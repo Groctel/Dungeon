@@ -163,25 +163,18 @@ void UI :: DrawChar (int y, int x, const chtype ch) {
 /** @fn void UI :: UpdateLog ()
   * @brief Log window updater
   *
-  * Gets the log's pending messages and prints them one by one in the log
+  * Gets the log's pending events and prints them one by one in the log
   * window.
   */
 
 void UI :: UpdateLog () {
-	if (Log::Instance()->Pending() == 1) {
-		werase(gamelog);
-		mvwprintw(gamelog, 1, 1, Log::Instance()->Print().c_str());
-		RefreshWindow(gamelog);
-	}
-	else if (Log::Instance()->Pending() > 1) {
-		std::stack<std::string> messages = Log::Instance()->PrintPending();
-		size_t pending = messages.size();
+	std::stack<std::string> events = Log::Instance()->PrintPending();
+	size_t pending = events.size();
 
-		for (size_t i=0; i<pending; i++) {
-			werase(gamelog);
-			mvwprintw(gamelog, 1, 1, messages.top().c_str());
-			RefreshWindow(gamelog);
-			messages.pop();
-		}
+	for (size_t i=0; i<pending; i++) {
+		werase(gamelog);
+		mvwprintw(gamelog, 1, 1, events.top().c_str());
+		RefreshWindow(gamelog);
+		events.pop();
 	}
 }
