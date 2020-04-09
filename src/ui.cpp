@@ -7,6 +7,7 @@ UI * UI :: instance = nullptr;
   */
 
 UI :: UI ()
+	:min_log (0)
 { }
 
 /** @fn void UI :: InitScreen ()
@@ -33,10 +34,10 @@ void UI :: InitScreen () {
   */
 
 void UI :: InitWindows () {
-	commandbar = newwin (1, COLS, LINES-1, 0);
-	gameframe = newwin(LINES-5, COLS*0.75, 0, 0);
-	gamelog = newwin(3, COLS*0.75, LINES-4, 0);
-	sidemenu = newwin(LINES-1, COLS*0.25-2, 0, COLS*0.75+2);
+	commandbar = newwin (1,       COLS,        LINES-1, 0);
+	gameframe  = newwin (LINES-7, COLS*0.75,   0,       0);
+	gamelog    = newwin (5,       COLS*0.75,   LINES-6, 0);
+	sidemenu   = newwin (LINES-1, COLS*0.25-2, 0,       COLS*0.75+2);
 
 	MakeActive(gameframe);
 
@@ -116,6 +117,30 @@ WINDOW * UI :: ActiveWindow () const {
 	return activewindow;
 }
 
+/** @fn const WINDOW * UI :: GameFrame () const
+  * @brief Constant gameframe getter
+  *
+  * Compare with `UI::ActiveWindow()` to check its identity.
+  *
+  * @return Constant pointer to the gameframe window
+  */
+
+const WINDOW * UI :: GameFrame () const {
+	return gameframe;
+}
+
+/** @fn const WINDOW * UI :: GameLog () const
+  * @brief Constant gamelog getter
+  *
+  * Compare with `UI::ActiveWindow()` to check its identity.
+  *
+  * @return Constant pointer to the gamelog window
+  */
+
+const WINDOW * UI :: GameLog () const {
+	return gamelog;
+}
+
 /** @fn void UI :: Init ()
   * @brief General UI initialiser
   *
@@ -141,6 +166,7 @@ void UI :: Stop () {
 	delwin(gameframe);
 	delwin(gamelog);
 	delwin(sidemenu);
+	delwin(activewindow);
 	endwin();
 	curs_set(1);
 }
@@ -160,21 +186,101 @@ void UI :: DrawChar (int y, int x, const chtype ch) {
 	RefreshWindow(activewindow);
 }
 
-/** @fn void UI :: UpdateLog ()
-  * @brief Log window updater
+/** @fn void UI :: CloseLog ()
+  * @brief Retract the expanded log window into the docked window
   *
-  * Gets the log's pending events and prints them one by one in the log
-  * window.
+  * Resizes and moves the window back into the dock position and refreshes the
+  * screen to get rid of artifacts. After that, it prints the last lines and
+  * returns the control to the gameframe.
   */
 
-void UI :: UpdateLog () {
-	std::stack<std::string> events = Log::Instance()->PrintPending();
-	size_t pending = events.size();
+void UI :: CloseLog () {
+	wresize(gamelog, 5, COLS*0.75);
+	mvwin(gamelog, LINES-6, 0);
+	erase();
+	refresh();
+	mvwprintw(ActiveWindow(), 1, 1, Log::Instance()->Print().c_str());
+	RefreshWindows();
+	MakeActive(gameframe);
+}
 
-	for (size_t i=0; i<pending; i++) {
-		werase(gamelog);
-		mvwprintw(gamelog, 1, 1, events.top().c_str());
-		RefreshWindow(gamelog);
+/** @fn void UI :: OpenLog ()
+  * @brief Expand the docked log window over the gameframe
+  *
+  * Resizes and moves the window over the gameframe to show more lines than in
+  * the docked position. After that, it prints the last log lines to fill the
+  * window and captures the keyboard control.
+  */
+
+void UI :: OpenLog () {
+	std::stack<std::string> events = Log::Instance()->Print(min_log, max_log);
+
+	mvwin(gamelog, LINES-13, 0);
+	wresize(gamelog, 12, COLS*0.75);
+	MakeActive(gamelog);
+
+	min_log = 0;
+	max_log = gamelog->_maxy-1;
+
+	ShowLog(Log::Instance()->Print(min_log, max_log));
+
+	RefreshWindow(gamelog);
+}
+
+/** @fn void UI ::ScrollLog (Scrolling scroll)
+  * @brief Scrolls the log up or down one line when the window is expanded
+  *
+  * @param scroll Direction to scroll the log
+  */
+
+void UI :: ScrollLog (Scrolling scroll) {
+	switch (scroll) {
+		case (Scrolling::d):
+			max_log--;
+			if (--min_log < 0) {
+				min_log = 0;
+				max_log++;
+			}
+		break;
+		case (Scrolling::u):
+			max_log++;
+			if (++min_log > (int) Log::Instance()->Size()-1) {
+				min_log = Log::Instance()->Size()-1;
+				max_log--;
+			}
+		break;
+	}
+
+	ShowLog(Log::Instance()->Print(min_log, max_log));
+}
+
+/** @fn void UI :: ShowLog (std::stack<std::string> events)
+  * @brief Display log lines to fill the gamelog window
+  *
+  * @param events Log lines to be displayed
+  *
+  * If the number of events passed to the functions is smaller than the number
+  * of lines to be filled, it gets as many events as lines the window has and
+  * skips the remaining top lines if the number of events is still smaller. It
+  * then prints them line by line all the way to the bottom.
+  */
+
+void UI :: ShowLog (std::stack<std::string> events) {
+	int line = 1;
+
+	werase(gamelog);
+
+	if ((int) events.size() < gamelog->_maxy) {
+		events = Log::Instance()->Print(min_log, gamelog->_maxy-2);
+
+		if ((int) events.size() < gamelog->_maxy)
+			for (size_t i=0; i<gamelog->_maxy-events.size()-1; i++, line++);
+	}
+
+	for (; line<gamelog->_maxy && !events.empty(); line++) {
+		mvwprintw(gamelog, line, 1, events.top().c_str());
 		events.pop();
 	}
+
+	RefreshWindow(gamelog);
 }

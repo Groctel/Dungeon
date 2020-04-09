@@ -28,58 +28,16 @@ Dungeon :: ~Dungeon () {
 	delete player;
 }
 
-/** @fn void Dungeon :: MovePlayerUp ()
-  * @brief Move the player up one square
+/** @fn void Dungeon :: MovePlayer (Coordinate coord)
+  * @brief Move the player one square to the specified coordinate
   *
   * Prints a blank character where the player is currently standing, calls the
   * player to calculate its new position and prints the player in the new
   * position.
   */
 
-void Dungeon :: MovePlayerUp () {
+void Dungeon :: MovePlayer (Coordinate coord) {
 	UI::Instance()->DrawChar(player->Y(), player->X(), ' ');
-	player->MoveUp(UI::Instance()->ActiveWindow());
-	UI::Instance()->DrawChar(player->Y(), player->X(), player->Avatar());
-}
-
-/** @fn void Dungeon :: MovePlayerDown ()
-  * @brief Move the player down one square
-  *
-  * Prints a blank character where the player is currently standing, calls the
-  * player to calculate its new position and prints the player in the new
-  * position.
-  */
-
-void Dungeon :: MovePlayerDown () {
-	UI::Instance()->DrawChar(player->Y(), player->X(), ' ');
-	player->MoveDown(UI::Instance()->ActiveWindow());
-	UI::Instance()->DrawChar(player->Y(), player->X(), player->Avatar());
-}
-
-/** @fn void Dungeon :: MovePlayerLeft ()
-  * @brief Move the player left one square
-  *
-  * Prints a blank character where the player is currently standing, calls the
-  * player to calculate its new position and prints the player in the new
-  * position.
-  */
-
-void Dungeon :: MovePlayerLeft () {
-	UI::Instance()->DrawChar(player->Y(), player->X(), ' ');
-	player->MoveLeft(UI::Instance()->ActiveWindow());
-	UI::Instance()->DrawChar(player->Y(), player->X(), player->Avatar());
-}
-
-/** @fn void Dungeon :: MovePlayerRight ()
-  * @brief Move the player right one square
-  *
-  * Prints a blank character where the player is currently standing, calls the
-  * player to calculate its new position and prints the player in the new
-  * position.
-  */
-
-void Dungeon :: MovePlayerRight () {
-	UI::Instance()->DrawChar(player->Y(), player->X(), ' ');
-	player->MoveRight(UI::Instance()->ActiveWindow());
+	player->Move(UI::Instance()->ActiveWindow(), coord);
 	UI::Instance()->DrawChar(player->Y(), player->X(), player->Avatar());
 }

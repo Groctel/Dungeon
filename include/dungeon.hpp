@@ -5,6 +5,7 @@
 #define DUNGEON_DUNGEON
 
 #include <ncurses.h>
+#include "enum.hpp"
 #include "player.hpp"
 #include "ui.hpp"
 
@@ -23,10 +24,7 @@ public:
 	Dungeon  ();
 	~Dungeon ();
 
-	void MovePlayerUp    ();
-	void MovePlayerDown  ();
-	void MovePlayerLeft  ();
-	void MovePlayerRight ();
+	void MovePlayer (Coordinate coord);
 };
 
 #endif

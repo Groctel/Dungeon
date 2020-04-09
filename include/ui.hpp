@@ -7,6 +7,8 @@
 #include <clocale>
 #include <ncurses.h>
 #include <stack>
+#include <string>
+#include "enum.hpp"
 #include "log.hpp"
 
 /** @class UI
@@ -14,6 +16,12 @@
   *
   * @var UI* instance
   * Singleton instance pointer
+  *
+  * @var int min_log
+  * Most recent event to be printed at the log window
+  *
+  * @var int max_log
+  * Oldest event to be printed at the log window
   *
   * @var WINDOW* activewindow
   * Window the player is currently controlling
@@ -35,6 +43,9 @@ class UI {
 private:
 	static UI * instance;
 
+	int min_log,
+	    max_log;
+
 	WINDOW * activewindow,
 	       * commandbar,
 	       * gameframe,
@@ -55,12 +66,19 @@ public:
 	~UI ();
 
 	WINDOW * ActiveWindow () const;
+	const WINDOW * GameFrame () const;
+	const WINDOW * GameLog () const;
 
 	void Init ();
 	void Stop ();
 
 	void DrawChar  (int y, int x, const chtype ch);
-	void UpdateLog ();
+
+	void CloseLog  ();
+	void OpenLog   ();
+	void ScrollLog (Scrolling scroll);
+	void ShowLog   (std::stack<std::string> events
+	                = Log::Instance()->PrintPending());
 };
 
 #endif

@@ -48,6 +48,20 @@ size_t Log :: Pending () const {
 	return pending;
 }
 
+/** @fn size_t Log :: Size () const
+  * @brief Size of the log's history getter
+  *
+  * @param Argument name Description
+  *
+  * Extended description
+  *
+  * @return Number of events recorded plus the `GAME_START` line
+  */
+
+size_t Log :: Size () const {
+	return history.size();
+}
+
 /** @fn void Log :: Reset ()
   * @brief Game start timestamp resetter
   *
@@ -55,6 +69,8 @@ size_t Log :: Pending () const {
   */
 
 void Log :: Reset () {
+	history.clear();
+	history.push_back(GAME_START);
 	time(&starttime);
 }
 
@@ -99,7 +115,7 @@ void Log :: Record (const std::string text) {
   */
 
 std::string Log :: Print () const {
-	return * history.rbegin();
+	return * history.crbegin();
 }
 
 /** @fn std::string Log :: Print (size_t position) const
@@ -124,7 +140,9 @@ std::string Log :: Print (size_t position) const {
   * @param from Index of the first event to get
   * @param to   Index of the last event to get
   *
-  * Both `history[from]` and `history[to]` are printed.
+  * Both `history[from]` and `history[to]` are printed. At an attempt to print
+  * more events than the first one, the function stops and returns the already
+  * printed events.
   *
   * @return Stack with the requested events in chronological order
   */
@@ -133,10 +151,15 @@ std::stack<std::string> Log :: Print (size_t from, size_t to) const {
 	std::stack<std::string> events;
 	std::vector<std::string>::const_reverse_iterator it = history.crbegin();
 
-	for (size_t i=0; i<from; i++, ++it);
+	if (from < history.size()) {
+		for (size_t i=0; i<from; i++, ++it);
 
-	for (size_t i=from; i<=to; i++, ++it)
-		events.push(*it);
+		for (size_t i=from; i<=to && it!=history.crend(); i++, ++it)
+			events.push(*it);
+	}
+	else {
+		events.push(GAME_START);
+	}
 
 	return events;
 }

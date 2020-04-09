@@ -19,6 +19,55 @@ Controller :: Controller (Dungeon & d)
 	 dungeon (d)
 { }
 
+/** @fn void Controller :: GetKeyGameFrame (int key)
+  * @brief Get user input for the gameframe and call functions
+  *
+  * @param key Key pressed by the user in the gameframe
+  */
+
+void Controller :: GetKeyGameFrame (int key) {
+	switch (key) {
+		case KEY_UP:
+			dungeon.MovePlayer(Coordinate::n);
+		break;
+		case KEY_DOWN:
+			dungeon.MovePlayer(Coordinate::s);
+		break;
+		case KEY_LEFT:
+			dungeon.MovePlayer(Coordinate::w);
+		break;
+		case KEY_RIGHT:
+			dungeon.MovePlayer(Coordinate::e);
+		break;
+		case 'l':
+			UI::Instance()->OpenLog();
+		break;
+		case 'q':
+			running = false;
+		break;
+	}
+}
+
+/** @fn void Controller :: GetKeyGameLog (int key)
+  * @brief Get user input for the gamelog and call functions
+  *
+  * @param key Key pressed by the user in the gamelog
+  */
+
+void Controller ::GetKeyGameLog (int key) {
+	switch (key) {
+		case KEY_UP:
+			UI::Instance()->ScrollLog(Scrolling::u);
+		break;
+		case KEY_DOWN:
+			UI::Instance()->ScrollLog(Scrolling::d);
+		break;
+		case 'q':
+			UI::Instance()->CloseLog();
+		break;
+	}
+}
+
 /** @fn void Controller :: Run ()
   * @brief Main game loop
   *
@@ -31,37 +80,25 @@ void Controller :: Run () {
 
 	while (running) {
 		GetKey();
-		UI::Instance()->UpdateLog();
+
+		if (UI::Instance()->ActiveWindow() != UI::Instance()->GameLog())
+			UI::Instance()->ShowLog(Log::Instance()->PrintPending());
 	}
 }
 
 /** @fn void Controller :: GetKey (int key)
-  * @brief Capture user input and call functions
+  * @brief Capture user input and send to the appropriate window getter
   *
   * @param key Key pressed by the user in the active window
   *
-  * As of now, `UI::gameframe` stays as the active window for the duration of
-  * the game. When the interface gets more complex different getters will be set
-  * for different windows to simplify the code and reduce the sequential search
-  * time.
+  * Checks the active window's identity and send the key to the appropriate
+  * private getter, allowing for multiple definitions of individual keys managed
+  * by each window's context.
   */
 
 void Controller :: GetKey (int key) {
-	switch (key) {
-		case KEY_UP:
-			dungeon.MovePlayerUp();
-		break;
-		case KEY_DOWN:
-			dungeon.MovePlayerDown();
-		break;
-		case KEY_LEFT:
-			dungeon.MovePlayerLeft();
-		break;
-		case KEY_RIGHT:
-			dungeon.MovePlayerRight();
-		break;
-		case 'q':
-			running = false;
-		break;
-	}
+	if (UI::Instance()->ActiveWindow() == UI::Instance()->GameFrame())
+		GetKeyGameFrame(key);
+	else if (UI::Instance()->ActiveWindow() == UI::Instance()->GameLog())
+		GetKeyGameLog(key);
 }

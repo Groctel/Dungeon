@@ -5,6 +5,7 @@
 #define DUNGEON_PLAYER
 
 #include <ncurses.h>
+#include "enum.hpp"
 #include "log.hpp"
 
 /** @class Player
@@ -34,10 +35,7 @@ public:
 	int    Y      () const;
 	int    X      () const;
 
-	void MoveUp    (WINDOW* win);
-	void MoveDown  (WINDOW* win);
-	void MoveLeft  (WINDOW* win);
-	void MoveRight (WINDOW* win);
+	void Move (WINDOW* win, Coordinate coord);
 };
 
 #endif

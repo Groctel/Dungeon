@@ -32,6 +32,8 @@ class Log {
 private:
 	static Log * instance;
 
+	const std::string GAME_START = "··--== GAME START ==--··";
+
 	size_t pending;
 	time_t now,
 	       starttime;
@@ -45,6 +47,7 @@ public:
 	~Log ();
 
 	size_t Pending () const;
+	size_t Size    () const;
 
 	void Reset  ();
 	void Record (const std::string text);

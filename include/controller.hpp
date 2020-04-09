@@ -6,6 +6,7 @@
 
 #include <ncurses.h>
 #include "dungeon.hpp"
+#include "enum.hpp"
 #include "player.hpp"
 #include "ui.hpp"
 
@@ -24,6 +25,8 @@ private:
 	bool running;
 	Dungeon & dungeon;
 
+	void GetKeyGameFrame (int key);
+	void GetKeyGameLog   (int key);
 public:
 	Controller (Dungeon & d);
 

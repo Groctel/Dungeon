@@ -59,8 +59,8 @@ int Player :: X () const {
 	return pos_x;
 }
 
-/** @fn void Player :: MoveUp (WINDOW* win)
-  * @brief Move the player up one square
+/** @fn void Player :: Move (WINDOW* win, Coordinate coord)
+  * @brief Move the player one square to the specified coordinate
   *
   * @param win Window where the player is moved
   *
@@ -68,57 +68,49 @@ int Player :: X () const {
   * position and logs the action.
   */
 
-void Player :: MoveUp (WINDOW* win) {
-	if (--pos_y < 1)
-		pos_y = 1;
+void Player :: Move (WINDOW* win, Coordinate coord) {
+	bool success = true;
+	std::string coordinate, event;
 
-	Log::Instance()->Record("Player moved one square up.");
-}
+	switch (coord) {
+		case (Coordinate::e):
+			coordinate = "east";
 
-/** @fn void Player :: MoveDown (WINDOW* win)
-  * @brief Move the player down one square
-  *
-  * @param win Window where the player is moved
-  *
-  * Checks if the player is exceeding the window limits to correct their
-  * position and logs the action.
-  */
+			if (++pos_x > win->_maxx - 1) {
+				pos_x = win->_maxx - 1;
+				success = false;
+			}
+		break;
+		case (Coordinate::n):
+			coordinate = "north";
 
-void Player :: MoveDown (WINDOW* win) {
-	if (++pos_y > win->_maxy - 1)
-		pos_y = win->_maxy - 1;
+			if (--pos_y < 1) {
+				pos_y = 1;
+				success = false;
+			}
+		break;
+		case (Coordinate::s):
+			coordinate = "south";
 
-	Log::Instance()->Record("Player moved one square down.");
-}
+			if (++pos_y > win->_maxy - 1) {
+				pos_y = win->_maxy - 1;
+				success = false;
+			}
+		break;
+		case (Coordinate::w):
+			coordinate = "west";
 
-/** @fn void Player :: MoveLeft (WINDOW* win)
-  * @brief Move the player left one square
-  *
-  * @param win Window where the player is moved
-  *
-  * Checks if the player is exceeding the window limits to correct their
-  * position and logs the action.
-  */
+			if (--pos_x < 1) {
+				pos_x = 1;
+				success = false;
+			}
+		break;
+	}
 
-void Player :: MoveLeft (WINDOW* win) {
-	if (--pos_x < 1)
-		pos_x = 1;
+	if (success)
+		event = "Player moved one square " + coordinate;
+	else
+		event = "Player hit the " + coordinate + "ern wall";
 
-	Log::Instance()->Record("Player moved one square left.");
-}
-
-/** @fn void Player :: MoveRight (WINDOW* win)
-  * @brief Move the player right one square
-  *
-  * @param win Window where the player is moved
-  *
-  * Checks if the player is exceeding the window limits to correct their
-  * position and logs the action.
-  */
-
-void Player :: MoveRight (WINDOW* win) {
-	if (++pos_x > win->_maxx - 1)
-		pos_x = win->_maxx - 1;
-
-	Log::Instance()->Record("Player moved one square right.");
+	Log::Instance()->Record(event);
 }
