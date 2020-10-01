@@ -7,7 +7,13 @@ SRC  = $(HOME)/src
 
 CXXFLAGS = -std=c++11 -O2 -Wall -I$(INC) -lncursesw
 
+.PHONY: all build directories docs constroller dungeon ui log player debug clean
+
 all: build docs
+
+debug: CXXFLAGS = -std=c++11 -g -Og -Wall -I$(INC) -lncursesw
+debug: clean all
+
 
 build: directories controller dungeon ui
 	@mkdir -p $(BIN)
@@ -42,3 +48,7 @@ player: log
 
 ui: log
 	$(CXX) $(CXXFLAGS) $(SRC)/ui.cpp -c -o $(OBJ)/ui.o
+
+clean:
+	-rm $(OBJ)/*.o
+	-rm $(BIN)/dungeon
